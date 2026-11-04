@@ -11,6 +11,7 @@ Jalankan:  ../pilot/.venv/bin/python unify.py
 import csv
 import glob
 import os
+from pathlib import Path
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -323,8 +324,11 @@ def main():
     assert not dup, f'duplicate ids: {dup[:5]}'
     for r in rows:
         assert os.path.isabs(r['image_path']) and os.path.exists(r['image_path']), r['image_path']
+        # Simpan path RELATIF terhadap root repo dengan pemisah '/', supaya manifest
+        # bisa dipakai di Windows/macOS/Linux dan di folder clone mana pun.
+        r['image_path'] = Path(os.path.relpath(r['image_path'], ROOT)).as_posix()
     out = os.path.join(OUT_DIR, 'manifest.csv')
-    with open(out, 'w', newline='') as f:
+    with open(out, 'w', newline='', encoding='utf-8') as f:
         w = csv.DictWriter(f, fieldnames=COLUMNS)
         w.writeheader()
         w.writerows(rows)

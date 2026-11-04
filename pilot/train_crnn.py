@@ -62,7 +62,7 @@ def main():
     ap.add_argument('--out', default=os.path.join(HERE, 'results/crnn_ctc.json'))
     a = ap.parse_args()
     torch.manual_seed(0); random.seed(0); np.random.seed(0)
-    dev = 'mps' if torch.backends.mps.is_available() else 'cpu'  # CNN+LSTM di MPS, loss CTC dihitung di CPU
+    dev = 'cuda' if torch.cuda.is_available() else ('mps' if torch.backends.mps.is_available() else 'cpu')  # NVIDIA (Windows/Linux): cuda; Mac: mps. Loss CTC dihitung di CPU
     torch.set_num_threads(8)
     tr = [json.loads(l) for l in open(os.path.join(HERE, 'data/train/labels.jsonl'))]
     te = [json.loads(l) for l in open(os.path.join(HERE, 'data/test/labels.jsonl'))]

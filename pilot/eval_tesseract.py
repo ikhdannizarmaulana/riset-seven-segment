@@ -40,7 +40,10 @@ def ocr(path, variant):
         img = preprocess(img)
     else:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    cfg = f'--tessdata-dir {TESSDATA} --oem 1 --psm 7 -c tessedit_char_whitelist=0123456789.'
+    # Folder traineddata diberikan lewat env TESSDATA_PREFIX (bukan --tessdata-dir) supaya
+    # tetap jalan bila path berisi spasi, mis. C:\Users\Nama Lengkap\... di Windows.
+    os.environ['TESSDATA_PREFIX'] = TESSDATA
+    cfg = '--oem 1 --psm 7 -c tessedit_char_whitelist=0123456789.'
     t0 = time.perf_counter()
     txt = pytesseract.image_to_string(img, lang=lang, config=cfg)
     dt = (time.perf_counter() - t0) * 1000

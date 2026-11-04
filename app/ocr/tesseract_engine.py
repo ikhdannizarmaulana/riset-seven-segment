@@ -5,16 +5,52 @@ Variabel lingkungan:
                mis. `ssd_ft.traineddata` ke folder tessdata lalu set TESS_LANG=ssd_ft.
   TESS_PSM   : page segmentation mode (default 7 = satu baris teks).
   TESSDATA_PREFIX : folder tessdata kustom (opsional, dibaca Tesseract sendiri).
+  TESSERACT_CMD : path lengkap ke program tesseract (opsional). Berguna di Windows bila
+               tesseract tidak ada di PATH, mis. C:\\Program Files\\Tesseract-OCR\\tesseract.exe.
+               Bila kosong, engine mencari di PATH lalu di lokasi instalasi umum Windows.
 """
 from __future__ import annotations
 
 import os
 import shutil
+import sys
+from pathlib import Path
 
 import numpy as np
 import pytesseract
 
 from .base import ALLOWED_CHARS, EngineUnavailable, OCREngine, OCRResult, clean_digits
+
+# Lokasi instalasi umum Tesseract di Windows (installer UB Mannheim / Chocolatey).
+_WINDOWS_CANDIDATES = [
+    Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "Tesseract-OCR" / "tesseract.exe",
+    Path(os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")) / "Tesseract-OCR" / "tesseract.exe",
+    Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Tesseract-OCR" / "tesseract.exe",
+]
+
+
+def find_tesseract() -> str | None:
+    """Cari program tesseract: env TESSERACT_CMD → PATH → lokasi umum Windows."""
+    env = os.getenv("TESSERACT_CMD")
+    if env and Path(env).is_file():
+        return env
+    found = shutil.which("tesseract")
+    if found:
+        return found
+    if sys.platform.startswith("win"):
+        for c in _WINDOWS_CANDIDATES:
+            if c.is_file():
+                return str(c)
+    return None
+
+
+def _install_hint() -> str:
+    if sys.platform.startswith("win"):
+        return ("pasang Tesseract: winget install UB-Mannheim.TesseractOCR "
+                "(atau set TESSERACT_CMD ke path tesseract.exe)")
+    if sys.platform == "darwin":
+        return "pasang Tesseract: brew install tesseract"
+    return "pasang Tesseract: sudo apt install tesseract-ocr"
 
 
 class TesseractEngine(OCREngine):
@@ -26,8 +62,10 @@ class TesseractEngine(OCREngine):
         self.psm = int(psm or os.getenv("TESS_PSM", "7"))
 
     def available(self) -> tuple[bool, str]:
-        if shutil.which("tesseract") is None:
-            return False, "binary tesseract tidak ditemukan (brew install tesseract)"
+        cmd = find_tesseract()
+        if cmd is None:
+            return False, f"program tesseract tidak ditemukan ({_install_hint()})"
+        pytesseract.pytesseract.tesseract_cmd = cmd
         try:
             langs = pytesseract.get_languages(config="")
         except Exception as e:  # pragma: no cover

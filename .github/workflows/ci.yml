@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  app-tests:
+    name: App tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: app/requirements.txt
+
+      - name: Install Tesseract (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install tesseract -y --no-progress
+          # Sengaja TIDAK menambah PATH: app harus menemukan
+          # C:\Program Files\Tesseract-OCR\tesseract.exe sendiri (seperti di laptop pengguna).
+          Test-Path "$env:ProgramFiles\Tesseract-OCR\tesseract.exe"
+
+      - name: Install Tesseract (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Install Tesseract (macOS)
+        if: runner.os == 'macOS'
+        run: brew install tesseract
+
+      - name: Install Python packages
+        working-directory: app
+        run: python -m pip install -r requirements.txt
+
+      - name: Engine detection
+        working-directory: app
+        run: python -c "from ocr.tesseract_engine import TesseractEngine as T; ok, why = T().available(); print(ok, why); assert ok, why"
+
+      - name: Pytest
+        working-directory: app
+        run: python -m pytest -q tests
+
+  windows-scripts:
+    name: PowerShell scripts parse (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse all .ps1 files
+        shell: pwsh
+        run: |
+          $bad = 0
+          Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object {
+            $errs = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$errs) | Out-Null
+            if ($errs.Count) { $bad++; Write-Host "::error file=$($_.FullName)::$($errs[0].Message)" } else { Write-Host "OK $($_.Name)" }
+          }
+          if ($bad) { exit 1 }
+
+  pipeline-smoke:
+    name: Generator + pipeline smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install numpy pillow opencv-python-headless
+      - name: Synthetic generator (small)
+        working-directory: pilot
+        run: python generator.py --out data/ci --per-condition 5 --seed 2026
+      - name: Manifest paths are relative and portable
+        run: python -c "import csv; rows=list(csv.DictReader(open('pipeline/unified/manifest.csv', encoding='utf-8'))); bad=[r['image_path'] for r in rows if ':' in r['image_path'] or r['image_path'].startswith('/') or chr(92) in r['image_path']]; print(len(rows), 'rows,', len(bad), 'non-portable'); assert not bad, bad[:3]"

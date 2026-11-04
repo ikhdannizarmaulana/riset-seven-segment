@@ -24,6 +24,7 @@ import csv
 import hashlib
 import json
 import os
+from pathlib import Path
 import random
 import sys
 
@@ -31,6 +32,22 @@ import cv2
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+
+
+def resolve_path(p):
+    """Path di manifest relatif terhadap root repo ('/' sebagai pemisah); path absolut tetap diterima."""
+    return p if os.path.isabs(p) else os.path.join(ROOT, *p.split('/'))
+
+
+def portable_path(p):
+    """Path di dalam repo -> relatif ke root dengan '/', di luar repo -> absolut."""
+    ap = os.path.abspath(p)
+    try:
+        rel = os.path.relpath(ap, ROOT)
+    except ValueError:  # Windows: beda drive (mis. C: vs D:)
+        return ap
+    return ap if rel.startswith('..') else Path(rel).as_posix()
 DEFAULT_MANIFEST = os.path.join(HERE, 'unified', 'manifest.csv')
 
 LEVELS = (1, 2, 3)
@@ -133,9 +150,10 @@ def apply(img, deg, level, rng, box=None):
 
 def load_working(r, use_crop, pad, max_side):
     """Baca citra -> (citra kerja BGR, box display di koordinat citra kerja atau None)."""
-    img = cv2.imread(r['image_path'], cv2.IMREAD_COLOR)
+    src = resolve_path(r['image_path'])
+    img = cv2.imread(src, cv2.IMREAD_COLOR)
     if img is None:
-        raise IOError(r['image_path'])
+        raise IOError(src)
     box = None
     if r.get('crop_x1') not in (None, ''):
         box = [int(float(r[k])) for k in ('crop_x1', 'crop_y1', 'crop_x2', 'crop_y2')]
@@ -210,7 +228,8 @@ def run(args):
                     cv2.imwrite(path, out)
                 w.writerow(dict(id=r['id'], source_dataset=r['source_dataset'], label=r['label'],
                                 degradation=g, level=l, params=json.dumps(p), seed=sd,
-                                path=os.path.abspath(path), orig_image_path=r['image_path']))
+                                path=portable_path(path),
+                                orig_image_path=r['image_path']))
                 n += 1
     print(f'{len(rows)} source images x {1 + len(degs) * len(args.levels)} conditions = {n} files')
     print(f'manifest -> {out_csv}')
