@@ -36,12 +36,12 @@ flowchart LR
 
 ### 1.1 Cara menjalankan
 ```bash
-cd /Users/ikhdan/riset-seven-segment/pipeline
+cd pipeline   # dari root repo (Windows: cd pipeline)
 ../pilot/.venv/bin/python unify.py
 ```
 - Butuh `Pillow` (sudah ada di `pilot/.venv`).
 - Dataset harus sudah diunduh ke `data/`. Folder ini **tidak ada di repo** (di-`.gitignore`). Cara mengunduhnya ada di `strategi_data.md`.
-- **Citra tidak disalin.** Manifest hanya menyimpan **path absolut** ke file asli. Di komputer lain, skrip ini harus dijalankan ulang supaya path-nya benar.
+- **Citra tidak disalin.** Manifest hanya menyimpan **path relatif terhadap root repo** dengan pemisah `/`, misalnya `data/kaggle_cramatsu/.../00_06.jpg`. Dengan begitu manifest yang sama bisa dipakai di Windows, macOS, dan Linux, di folder clone mana pun, asalkan dataset sudah diunduh ke `data/`. Skrip yang membaca manifest menggabungkan path ini dengan root repo (lihat `resolve_path()` di `degrade.py`).
 - Skrip memeriksa dua hal sebelum menulis: tidak ada `id` ganda, dan setiap `image_path` benar-benar ada (`assert`). Kalau salah satu gagal, skrip berhenti.
 
 ### 1.2 Kolom `manifest.csv`
@@ -53,7 +53,7 @@ cd /Users/ikhdan/riset-seven-segment/pipeline
 | `unit` | `string` = satu layar utuh, `digit` = potongan satu digit | `string` |
 | `original_split` | Pembagian bawaan dataset (bukan split kita) | `HQ`, `train`, `dev` |
 | `split_group` | **Kunci grup anti-bocor**: baris dengan grup sama harus masuk split yang sama | `sacha:dup0124` |
-| `image_path` | Path absolut citra | — |
+| `image_path` | Path citra **relatif terhadap root repo**, pemisah `/` (portabel Windows/macOS/Linux) | `data/kaggle_cramatsu/…/00_06_jpg….jpg` |
 | `label` | Label teks yang dipakai | `449` |
 | `label_source` | Dari mana label diambil | `original_integer`, `filename` |
 | `label_flag` | Kosong = aman. Terisi = ada yang janggal (alasan dipisah `\|`) | `cadran_mismatch:66` |
@@ -177,7 +177,7 @@ seed = 16 digit hex pertama dari sha256(f"{global_seed}|{id}|{degradasi}|{level}
 
 ### 2.4 Cara menjalankan
 ```bash
-cd /Users/ikhdan/riset-seven-segment/pipeline
+cd pipeline   # dari root repo (Windows: cd pipeline)
 PY=../pilot/.venv/bin/python   # butuh opencv-python-headless + numpy (sudah ada)
 
 # contoh dari docstring: 5 citra per dataset, semua degradasi, level 1-3

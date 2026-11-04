@@ -358,6 +358,18 @@ Fokus skripsi adalah perbandingan metode. Web app membuat ketiga engine jalan di
 **Q22. Kalau layar tidak terdeteksi?**
 Aplikasi meminta pengguna menggambar kotak layar secara manual sebagai cadangan.
 
+**Q21a. Aplikasinya bisa jalan di Windows?**
+Bisa. Aplikasi dan pipeline didukung di Windows 10/11, macOS, dan Linux.
+- **Setup Windows:** cukup satu skrip PowerShell (`scripts\windows\setup_app.ps1`). Skrip ini memasang Python dan Tesseract, menyiapkan lingkungan, lalu menjalankan uji otomatis.
+- **Bukti:** setiap perubahan kode diuji otomatis di ketiga sistem operasi lewat GitHub Actions (CI). Hasilnya bisa ditunjukkan di tab *Actions* repo.
+- **Hal khusus Windows yang ditangani:**
+  - Tesseract tidak ada di PATH, jadi app mencarinya sendiri di `C:\Program Files\Tesseract-OCR`.
+  - Encoding teks dipaksa UTF-8.
+  - Path file disimpan dalam format yang sama untuk semua OS.
+  - Firewall perlu diizinkan supaya HP bisa mengakses.
+- **Training:** di laptop dengan GPU NVIDIA otomatis memakai CUDA. Tanpa GPU NVIDIA memakai CPU (lebih lambat). Di Mac memakai GPU Apple (MPS).
+- **Pengecualian:** fine-tuning Tesseract (`tesstrain`) membutuhkan lingkungan Linux, jadi di Windows dijalankan lewat WSL2.
+
 **Q22a. Bagaimana pengguna memakai aplikasinya?** *(rencana #14, #15)*
 Cukup **unggah atau ambil foto**. Deteksi layar, prapemrosesan, dan ketiga metode berjalan otomatis, lalu hasilnya tampil berdampingan. Pengguna hanya ditanya "Apakah angkanya benar?". Semua parameter teknis disembunyikan di "Mode peneliti". Tampilannya memakai **design system**, yaitu kumpulan komponen dan aturan visual yang seragam, sehingga konsisten dan nyaman di HP.
 

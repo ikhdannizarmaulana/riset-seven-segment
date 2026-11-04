@@ -115,17 +115,37 @@ Istilah yang muncul:
 
 | Kebutuhan | Versi terpasang | Cek |
 |---|---|---|
-| macOS/Linux | macOS (Apple M4) | — |
+| Sistem operasi | **Windows 10/11, macOS, Linux** (dikembangkan di macOS Apple M4; diuji otomatis di ketiganya lewat GitHub Actions) | — |
 | Python | 3.10+; venv di `app/.venv` dibuat dengan Python 3.12 via `uv` | `.venv/bin/python --version` |
-| Tesseract | 5.5.4 (Homebrew) | `tesseract --version` |
+| Tesseract | 5.x (di Mac: 5.5.4 via Homebrew; di Windows: installer UB Mannheim via `winget`) | `tesseract --version` |
 | Paket Python | dikunci di `requirements.txt`: `fastapi==0.162.0`, `httpx==0.28.1`, `numpy==2.5.4`, `opencv-python-headless==5.0.0.93`, `pillow==13.0.0`, `pytesseract==0.3.13`, `pytest==9.2.0`, `python-multipart==0.0.33`, `uvicorn==0.54.0` | `cat requirements.txt` |
 
 `onnxruntime` **belum** ada di `requirements.txt`. Paket ini ditambahkan saat #8.
 
 ### 4.2 Menjalankan server
 
+#### Windows (PowerShell)
+
+```powershell
+cd riset-seven-segment
+powershell -ExecutionPolicy Bypass -File scripts\windows\setup_app.ps1   # sekali: Python 3.12, Tesseract, venv, pytest
+powershell -ExecutionPolicy Bypass -File scripts\windows\run_app.ps1     # jalankan server + tampilkan alamat untuk HP
+```
+
+Perbedaan penting di Windows, dan cara app menanganinya:
+
+| Masalah di Windows | Kenapa terjadi | Penanganan di app |
+|---|---|---|
+| Program `tesseract` sering **tidak ada di PATH** setelah instalasi | Installer Windows memasangnya di `C:\Program Files\Tesseract-OCR\` tanpa menambah PATH | `ocr/tesseract_engine.py` → `find_tesseract()` mencari berurutan: env `TESSERACT_CMD`, lalu PATH, lalu lokasi instalasi umum Windows. Pesan error menyebut cara memasang sesuai OS. Teruji di CI Windows tanpa menambah PATH. |
+| Encoding file teks bawaan bukan UTF-8 | Windows memakai code page lama (cp1252) | Skrip PowerShell menyalakan `PYTHONUTF8=1`. `storage.py` sudah menulis `labels.csv` dengan `encoding="utf-8"`. |
+| Path memakai `\` dan huruf drive | Format path Windows | Kode memakai `pathlib`. Manifest dan label menyimpan path relatif dengan `/`. |
+| HP tidak bisa membuka app | Windows Firewall memblokir port 8000 | Saat pertama menjalankan, pilih **Allow** untuk jaringan *Private*. `run_app.ps1` menampilkan IP laptop. |
+| Perintah `.venv/bin/...` tidak ada | Di Windows foldernya `.venv\Scripts\` | Skrip PowerShell memakai `.venv\Scripts\python.exe` |
+
+#### macOS / Linux
+
 ```bash
-cd ~/riset-seven-segment/app
+cd riset-seven-segment/app
 brew install tesseract            # sekali saja; cek: which tesseract  (terpasang: 5.5.4)
 
 # venv sudah dibuat di .venv. Membuat ulang bila perlu:
@@ -141,7 +161,7 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requi
 | Alamat | Isi |
 |---|---|
 | <http://localhost:8000> | Halaman "Ambil & Label" (di laptop) |
-| `http://<IP-laptop>:8000` | Halaman yang sama dari HP. Cek IP dengan `ipconfig getifaddr en0`. Tombol "Foto" membuka kamera belakang. |
+| `http://<IP-laptop>:8000` | Halaman yang sama dari HP. Cek IP dengan `ipconfig getifaddr en0` (macOS), `hostname -I` (Linux), atau `ipconfig` (Windows; `run_app.ps1` menampilkannya otomatis). Tombol "Foto" membuka kamera belakang. |
 | `/summary` | Ringkasan dataset |
 | `/api/labels.csv` | Unduh CSV |
 | `/docs` | Dokumentasi API otomatis dari FastAPI (bisa mencoba endpoint langsung) |
@@ -160,13 +180,14 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requi
 
 ### 4.4 Variabel lingkungan (opsional)
 
-Variabel lingkungan (*environment variable*) adalah pengaturan yang diberikan saat menjalankan program, tanpa mengubah kode. Contoh: `TESS_LANG=eng .venv/bin/uvicorn main:app`.
+Variabel lingkungan (*environment variable*) adalah pengaturan yang diberikan saat menjalankan program, tanpa mengubah kode. Contoh macOS/Linux: `TESS_LANG=eng .venv/bin/uvicorn main:app`. Contoh Windows (PowerShell): `$env:TESS_LANG = "eng"; .\.venv\Scripts\python.exe -m uvicorn main:app`.
 
 | Variabel | Default | Fungsi |
 |---|---|---|
 | `TESS_LANG` | `eng` | traineddata Tesseract. Setelah fine-tuning (#5): salin `sevenseg_ft.traineddata` ke folder tessdata lalu `TESS_LANG=sevenseg_ft`. (Versi lama dokumen ini menulis `ssd_ft`; nama yang dipakai di PRD dan #5 adalah `sevenseg_ft`.) |
 | `TESS_PSM` | `7` | *Page segmentation mode*: cara Tesseract menganggap tata letak gambar. `7` = "gambar ini berisi satu baris teks", cocok untuk layar angka. |
 | `TESSDATA_PREFIX` | (bawaan Tesseract) | Folder tessdata kustom, dibaca Tesseract sendiri. |
+| `TESSERACT_CMD` | (dicari otomatis) | Path lengkap ke program tesseract, misalnya `C:\Program Files\Tesseract-OCR\tesseract.exe`. Hanya perlu diisi kalau Tesseract dipasang di lokasi tidak umum. Di PowerShell: `$env:TESSERACT_CMD = "D:\Tools\Tesseract-OCR\tesseract.exe"`. |
 | `CNN_MODEL_PATH` / `CRNN_MODEL_PATH` | `models/cnn_digit.onnx` / `models/crnn_ctc.onnx` | Lokasi model hasil training. |
 | `APP_DATA_DIR` | `data/` | Lokasi dataset hasil pelabelan. Tes otomatis mengarahkannya ke folder sementara agar `data/` asli tidak kotor. |
 

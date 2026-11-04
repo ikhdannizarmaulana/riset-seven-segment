@@ -137,7 +137,7 @@ flowchart LR
 | Kolom | Isi | Sumber |
 |---|---|---|
 | `file` | Nama file foto | — |
-| `path` | Path absolut di komputer peneliti (`/Users/ikhdan/…/data/github_sachaizadi/…`). Foto **tidak** ada di repo. | — |
+| `path` | Path foto **relatif terhadap root repo**, pemisah `/` (misalnya `data/github_sachaizadi/Datasets/LQ_digital/….jpg`), sehingga portabel di Windows/macOS/Linux. Foto **tidak** ada di repo; unduh dataset ke `data/` dulu. | — |
 | `quality` | `HQ` / `MQ` / `LQ`, dari folder asal foto | Dataset asli |
 | `label_ai` | Bacaan AI lengkap, misalnya `66.02`. Ini **label yang dipakai** untuk latih/uji. | Pass 2 jika ada, kalau tidak Pass 1 |
 | `integer_part`, `decimal_part` | Pecahan `label_ai` | idem |
@@ -253,7 +253,7 @@ Bacaan AI cocok dengan `used_liter`, bukan dengan cadran. Artinya kolom `cadran`
 Jalankan dari root repo (cukup stdlib Python):
 
 ```bash
-cd /Users/ikhdan/riset-seven-segment
+cd riset-seven-segment   # root repo
 python3 - <<'EOF'
 import csv
 from collections import Counter
@@ -316,7 +316,7 @@ Untuk mengecek satu foto secara manual: cari barisnya dengan `grep NAMA_FILE lab
 2. **AI bisa salah dengan yakin.** Keyakinan `high` adalah penilaian AI sendiri, bukan probabilitas yang terkalibrasi.
 3. **Bias seleksi:** foto yang sangat sulit (74 `unreadable`, 54 di antaranya LQ) dikeluarkan. Akibatnya data yang dipakai sedikit lebih "mudah" daripada dataset aslinya. Hal ini perlu disebut saat melaporkan akurasi. Rencana PRD: foto `unreadable` dilaporkan terpisah dan tidak masuk metrik utama.
 4. **Proses tidak 100% bisa diulang persis.** Prompt dan skrip penggabung tidak tersimpan, dan model AI bisa memberi jawaban berbeda kalau dijalankan ulang. Yang bisa diulang adalah **pengecekan** hasilnya (Bagian 7).
-5. **`path` berupa path absolut** di komputer peneliti. Di komputer lain, path harus disesuaikan.
+5. **`path` di `labels_final.csv` sudah relatif** terhadap root repo, sehingga portabel. File lama di `batches/` dan `out/*.jsonl` masih berisi path absolut dari komputer peneliti. File itu hanya arsip proses dan tidak dipakai skrip mana pun.
 
 ### 8.4 Lisensi
 - Repo SachaIZADI **tidak punya file LICENSE**. Secara hukum artinya *all rights reserved* (semua hak dipegang pembuatnya).

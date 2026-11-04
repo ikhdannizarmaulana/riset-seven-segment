@@ -34,8 +34,38 @@ Rencana lengkap ada di **[docs/PRD.md](docs/PRD.md)**. Pekerjaan dipecah menjadi
 
 ## Cara pakai
 
-### Prasyarat
-- macOS atau Linux, Python 3.12 (app) / 3.9+ (pilot)
+Aplikasi dan pipeline didukung di **Windows 10/11, macOS, dan Linux**. Setiap push diuji otomatis di ketiga sistem lewat GitHub Actions (`.github/workflows/ci.yml`).
+
+### 🪟 Windows (paling cepat)
+
+Buka **PowerShell**, lalu jalankan:
+
+```powershell
+git clone https://github.com/ikhdannizarmaulana/riset-seven-segment.git
+cd riset-seven-segment
+powershell -ExecutionPolicy Bypass -File scripts\windows\setup_app.ps1   # sekali saja
+powershell -ExecutionPolicy Bypass -File scripts\windows\run_app.ps1     # setiap kali mau pakai
+```
+
+Apa yang dilakukan `setup_app.ps1`:
+1. **Cek Python 3.12.** Kalau belum ada, dipasang lewat `winget`. Setelah itu tutup PowerShell, buka lagi, dan jalankan skripnya ulang.
+2. **Cek Tesseract.** Kalau belum ada, dipasang lewat `winget install UB-Mannheim.TesseractOCR`. App mencari `C:\Program Files\Tesseract-OCR\tesseract.exe` secara otomatis, jadi PATH tidak perlu diatur. Kalau lokasinya lain, set `$env:TESSERACT_CMD = "D:\...\tesseract.exe"`.
+3. **Buat `app\.venv`** dan pasang paket.
+4. **Jalankan uji otomatis.** Kalau hasilnya `6 passed`, instalasi berhasil.
+
+`run_app.ps1` menampilkan alamat untuk laptop (`http://localhost:8000`) dan untuk HP (`http://<IP-laptop>:8000`). Saat pertama dijalankan, **Windows Firewall akan bertanya: pilih "Allow" untuk jaringan Private**. Tanpa izin ini, HP tidak bisa membuka aplikasinya.
+
+Catatan Windows:
+- **Git:** kalau `git` belum ada, pasang dengan `winget install Git.Git`, atau unduh ZIP repo dari GitHub.
+- **Pilot:** jalankan `scripts\windows\run_pilot.ps1`. Kalau laptop punya **GPU NVIDIA** dan PyTorch versi CUDA terpasang, training otomatis memakai GPU (`cuda`); kalau tidak, memakai CPU (lebih lambat, tetap jalan). Di Mac, training memakai GPU Apple (`mps`).
+- **Path:** manifest dan label memakai path relatif dengan `/`, jadi bisa dipakai di Windows apa adanya.
+- **Folder:** hindari folder dengan karakter non-ASCII (misalnya huruf beraksen) di path repo. OpenCV di Windows bisa gagal membaca gambar di folder seperti itu.
+- **Fine-tuning Tesseract (#5):** `tesstrain` butuh `make` dan bash, jadi di Windows jalankan lewat **WSL2 (Ubuntu)** atau Docker. Detailnya ada di tiket #5 dan #17.
+
+### macOS / Linux
+
+#### Prasyarat
+- Python 3.12 (app) / 3.9+ (pilot)
 - Tesseract 5.x: `brew install tesseract` (macOS) atau `sudo apt install tesseract-ocr` (Ubuntu)
 - Opsional: [`uv`](https://github.com/astral-sh/uv) untuk membuat venv lebih cepat
 
@@ -44,7 +74,7 @@ git clone https://github.com/ikhdannizarmaulana/riset-seven-segment.git
 cd riset-seven-segment
 ```
 
-### 1. Menjalankan aplikasi web
+#### 1. Menjalankan aplikasi web
 
 ```bash
 cd app
@@ -54,7 +84,7 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requi
 ```
 
 - Laptop: <http://localhost:8000>
-- HP (Wi-Fi yang sama): `http://<IP-laptop>:8000`. Cek IP laptop dengan `ipconfig getifaddr en0` (macOS) atau `hostname -I` (Linux).
+- HP (Wi-Fi yang sama): `http://<IP-laptop>:8000`. Cek IP laptop dengan `ipconfig getifaddr en0` (macOS), `hostname -I` (Linux), atau `ipconfig` (Windows, lihat "IPv4 Address").
 - Alur: **Foto/Unggah → pilih area layar (ROI) → pilih engine → Baca → koreksi bila salah → Simpan**.
 - Ringkasan data ada di `/summary`, unduh label di `/api/labels.csv`, dokumentasi API di `/docs`.
 - Uji otomatis: `.venv/bin/python -m pytest -q tests/`
@@ -63,7 +93,7 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requi
 
 Detail arsitektur ada di [`app/README_app.md`](app/README_app.md).
 
-### 2. Menjalankan pilot (data sintetis, ±10 menit)
+#### 2. Menjalankan pilot (data sintetis, ±10 menit)
 
 ```bash
 cd pilot
@@ -80,15 +110,18 @@ Sebelum menjalankan `eval_tesseract.py`, unduh traineddata `ssd`, `7seg`, dan `s
 
 Hasil pilot (sintetis, exact match): Tesseract `7seg` 0,618, CNN per-digit 0,995, CRNN-CTC 0,988. Angka ini **batas atas yang optimistis**; keterbatasannya dijelaskan di [`pilot/README_pilot.md`](pilot/README_pilot.md).
 
-### 3. Dataset
+### Dataset & label (semua OS)
+
+#### 3. Dataset
 
 Dataset publik tidak di-commit. Cara mengunduhnya, beserta lisensi tiap dataset, ada di [`strategi_data.md`](strategi_data.md). Simpan ke folder `data/`, lalu satukan manifest-nya:
 
 ```bash
 cd pipeline && ../pilot/.venv/bin/python unify.py   # → pipeline/unified/manifest.csv
+# Windows: cd pipeline; ..\pilot\.venv\Scripts\python.exe unify.py
 ```
 
-### 4. Label foto pompa BBM (`labeling/`)
+#### 4. Label foto pompa BBM (`labeling/`)
 
 - 858 foto dataset SachaIZADI dilabeli ulang secara buta oleh AI vision. Sebanyak 102 foto sulit dibaca ulang dengan zoom.
 - Temuan: label asli dataset **tidak konsisten**. Umumnya desimal dibuang (`66.02` → `66`), tetapi 93 foto dinaikkan +1 (`128.28` → `129`). Jadi label asli tidak bisa dipakai mentah-mentah.
@@ -111,6 +144,8 @@ cd pipeline && ../pilot/.venv/bin/python unify.py   # → pipeline/unified/manif
 | `pipeline/` | Penyatuan dataset publik (`unify.py`) dan generator degradasi citra (`degrade.py`) |
 | `labeling/` | Label ulang foto pompa BBM (pass 1 `out/batch_*.jsonl`, pass 2 `out/recheck_*.jsonl`) |
 | `tools/` | Utilitas: ekstraksi frame video, split data per grup |
+| `scripts/windows/` | Skrip PowerShell untuk Windows: setup app, jalankan app, jalankan pilot |
+| `.github/workflows/ci.yml` | Uji otomatis di Windows, macOS, dan Linux setiap push |
 | `survei_literatur_seven_segment_AMR.md` | Survei 22 paper terkait (2018–2026) |
 | `strategi_data.md` | Verifikasi dataset publik dan lisensinya |
 

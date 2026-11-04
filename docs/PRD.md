@@ -167,7 +167,7 @@ flowchart LR
 - **Reproducibility:** semua training memakai seed tetap, versi paket dikunci (`requirements.txt`), dan perintah training/evaluasi tertulis di README. Hasil evaluasi menyimpan hash commit dan hash model.
 - **Kinerja [ASUMSI target]:** satu foto, satu engine, total ≤ 2 detik di laptop M4 (CPU). Engine `all` ≤ 4 detik.
 - **Keadilan perbandingan:** crop dan prapemrosesan identik, split identik, latency diukur di mesin dan thread yang sama (1 thread, seperti di pilot).
-- **Portabilitas:** app jalan di macOS/Linux dengan Python 3.12 dan Tesseract 5.x. Model ONNX ≤ 50 MB total.
+- **Portabilitas (wajib, permintaan Ikhdan 5 Nov 2026):** app dan pipeline jalan di **Windows 10/11**, macOS, dan Linux dengan Python 3.12 dan Tesseract 5.x. Setup Windows tersedia lewat satu skrip PowerShell. CI GitHub Actions menguji ketiga OS setiap push. Fine-tuning Tesseract (`tesstrain`) di Windows dijalankan lewat WSL2/Docker. Model ONNX ≤ 50 MB total. Lihat tiket #17.
 - **Data:** foto mentah dan dataset publik tidak di-commit ke repo. Yang di-commit hanya manifest, label, split, dan model kecil.
 
 ## 9. Metrik sukses
