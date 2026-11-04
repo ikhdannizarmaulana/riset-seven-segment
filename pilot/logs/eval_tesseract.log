@@ -1,0 +1,37 @@
+tesseract 5.5.4
+eng_raw: EM=0.1392 CER=0.5267 digit=0.5219 lat=53.4ms  (33s)
+   clean        EM=0.180 CER=0.461 digit=0.592
+   noise        EM=0.157 CER=0.509 digit=0.539
+   blur         EM=0.193 CER=0.396 digit=0.663
+   perspective  EM=0.137 CER=0.511 digit=0.546
+   dim          EM=0.173 CER=0.448 digit=0.594
+   glare        EM=0.063 CER=0.706 digit=0.324
+   ghost        EM=0.137 CER=0.525 digit=0.530
+   combined     EM=0.073 CER=0.667 digit=0.375
+eng_pre: EM=0.145 CER=0.5025 digit=0.5461 lat=52.3ms  (30s)
+   clean        EM=0.180 CER=0.403 digit=0.659
+   noise        EM=0.203 CER=0.413 digit=0.638
+   blur         EM=0.177 CER=0.393 digit=0.673
+   perspective  EM=0.157 CER=0.456 digit=0.606
+   dim          EM=0.110 CER=0.604 digit=0.429
+   glare        EM=0.040 CER=0.739 digit=0.278
+   ghost        EM=0.187 CER=0.376 digit=0.675
+   combined     EM=0.107 CER=0.649 digit=0.391
+ssd_pre: EM=0.5371 CER=0.232 digit=0.8366 lat=25.2ms  (17s)
+   clean        EM=0.690 CER=0.081 digit=0.981
+   noise        EM=0.753 CER=0.085 digit=0.958
+   blur         EM=0.683 CER=0.084 digit=0.988
+   perspective  EM=0.547 CER=0.185 digit=0.889
+   dim          EM=0.423 CER=0.448 digit=0.610
+   glare        EM=0.143 CER=0.489 digit=0.609
+   ghost        EM=0.710 CER=0.083 digit=0.972
+   combined     EM=0.347 CER=0.417 digit=0.665
+7seg_pre: EM=0.6179 CER=0.204 digit=0.8331 lat=24.7ms  (17s)
+   clean        EM=0.820 CER=0.046 digit=0.987
+   noise        EM=0.850 CER=0.041 digit=0.982
+   blur         EM=0.743 CER=0.069 digit=0.985
+   perspective  EM=0.633 CER=0.149 digit=0.912
+   dim          EM=0.523 CER=0.393 digit=0.638
+   glare        EM=0.110 CER=0.511 digit=0.513
+   ghost        EM=0.867 CER=0.037 digit=0.987
+   combined     EM=0.397 CER=0.404 digit=0.637

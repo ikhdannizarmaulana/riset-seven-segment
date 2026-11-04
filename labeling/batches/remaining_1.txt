@@ -1,0 +1,16 @@
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/01571ab5ea56dcd5a0ec4a57181723fed036cced.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0340e19a70a7463e1ca38311c8d4016483750147.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/d4e4850433c86506a1e0712a3fcf639dba393c79.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/1592ac464bafa097332373b44a0bc0a21c2a66d2.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0b10bbdc8da66f705ae2a62c72fcb6a88bd2a79d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/12904f02e53067c35b8e7f92ae278cf68a3d5286.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/204a632c3e3b7c6210f39a66f0831aa6cf777a0d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/b772d011f189cc97e88de5d114a0821941435fd4.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0850699e626dd6040c369252d5452d22712b2b4c.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/20f21432f4534ab130c992704c273d9603b9872d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/ebbeb1b4a007e7d5a4f62c2b504484c09fb43dde.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/09b283c81a4bd3a19d8329bda8f7d8e301739558.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/1ce8e986b4f49fa00ebf96b3e64ea226326e87af.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/73bdc1e381510f46aac391bddd99d2dee1f39e8d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/20eeb18a1f2afe9ea0e09bfc4e1abfe6010615ea.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/c1db6c89fb26a051f71726f7df032e43de6046bc.jpg

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ringkasan Data — OCR Seven Segment</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>Ringkasan Dataset</h1>
+  <nav><a href="/">Ambil &amp; Label</a> · <a href="/summary">Ringkasan Data</a> · <a href="/api/labels.csv">Unduh CSV</a></nav>
+</header>
+<main id="out"><p>Memuat…</p></main>
+<script>
+const table = (title, obj) => {
+  const rows = Object.entries(obj).sort((a, b) => b[1] - a[1]);
+  if (!rows.length) return `<section class="card"><h2>${title}</h2><p class="hint">Belum ada data.</p></section>`;
+  return `<section class="card"><h2>${title}</h2><table><tr><th>Nilai</th><th>Jumlah</th></tr>` +
+    rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("") + `</table></section>`;
+};
+fetch("/api/summary").then(r => r.json()).then(d => {
+  const devices = [...new Set(Object.values(d.lighting_x_device).flatMap(Object.keys))];
+  const cross = `<section class="card"><h2>Cahaya × Alat</h2><table><tr><th>cahaya \\ alat</th>${devices.map(x => `<th>${x}</th>`).join("")}</tr>` +
+    Object.entries(d.lighting_x_device).map(([l, m]) => `<tr><td>${l}</td>${devices.map(x => `<td>${m[x] || 0}</td>`).join("")}</tr>`).join("") + `</table></section>`;
+  const acc = `<section class="card"><h2>Akurasi indikatif saat pelabelan</h2>
+    <p class="hint">Bukan hasil uji formal — data uji Bab 4 harus dipisah (held-out).</p>
+    <table><tr><th>Engine</th><th>Cahaya</th><th>n</th><th>Exact match</th><th>CER</th><th>Rata2 OCR ms</th></tr>` +
+    d.accuracy.map(a => `<tr><td>${a.engine}</td><td>${a.lighting}</td><td>${a.n}</td><td>${(a.exact_match*100).toFixed(1)}%</td><td>${a.cer}</td><td>${a.avg_ocr_ms}</td></tr>`).join("") + `</table></section>`;
+  document.getElementById("out").innerHTML =
+    `<section class="card"><h2>Total data berlabel: ${d.total}</h2></section>` +
+    table("Per kondisi cahaya", d.by_lighting) + table("Per alat", d.by_device) +
+    table("Per sesi", d.by_session) + table("Per engine", d.by_engine) + cross + acc;
+});
+</script>
+</body>
+</html>

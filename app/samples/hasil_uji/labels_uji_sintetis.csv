@@ -1,0 +1,3 @@
+timestamp,image_file,crop_file,label,predicted,engine,confidence,ocr_ms,preprocess_ms,correct,device,lighting,session,notes,roi_x,roi_y,roi_w,roi_h,preprocess_params
+2026-11-04T22:43:36,b2747d79aefd.png,,123.4,4,tesseract,,,,0,sintetis_lcd,normal,UJI_SINTETIS,,0,0,0,0,{}
+2026-11-04T22:43:59,3400252e6ecb.png,3400252e6ecb_roi.png,0579,0519,tesseract,0.82,235.03,0.11,0,sintetis_led,terang,UJI_SINTETIS,,0,0,0,0,"{""roi_x"":0,""roi_y"":0,""roi_w"":0,""roi_h"":0,""target_height"":0,""grayscale"":true,""clahe"":false,""clahe_clip"":2,""blur"":0,""threshold"":""otsu"",""threshold_value"":127,""invert"":true,""dilate"":2}"

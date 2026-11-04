@@ -1,0 +1,8 @@
+400 citra DSEG
+OMP: Warning #96: Cannot form a team with 4 threads, using 1 instead.
+OMP: Hint Consider unsetting KMP_DEVICE_THREAD_LIMIT (KMP_ALL_THREADS), KMP_TEAMS_THREAD_LIMIT, and OMP_THREAD_LIMIT (if any are set).
+eng_pre       ALL EM=0.115 CER=0.519 digit=0.544
+ssd_pre       ALL EM=0.370 CER=0.294 digit=0.823
+7seg_pre      ALL EM=0.383 CER=0.280 digit=0.790
+cnn_perdigit  ALL EM=0.953 CER=0.015 digit=0.988
+crnn_ctc      ALL EM=0.885 CER=0.036 digit=0.981

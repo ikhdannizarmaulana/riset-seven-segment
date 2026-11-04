@@ -1,0 +1,9 @@
+source_dataset,unit,display_type,is_synthetic,n_images,n_split_groups,n_label_flagged,license
+github_sachaizadi,string,LCD,0,858,856,3,"NONE (no LICENSE file; all rights reserv"
+hf_7seg_ocr_synthetic,string,LED,1,100,1,0,"MIT"
+hf_bp_monitor,string,LCD,0,55,55,0,"MIT"
+hf_bp_monitor_digits,digit,LCD,0,388,55,0,"MIT"
+hf_jiazhi_utility_lcd,string,LCD,0,50,50,1,"CC BY-NC 4.0 (HF tag); README forbids re"
+kaggle_cramatsu,string,LED,0,390,390,20,"MIT"
+TOTAL,,,,1841,,,
+REAL_STRING_IMAGES,,,,1353,,,

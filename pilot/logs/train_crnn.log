@@ -1,0 +1,20 @@
+parameter: 564684
+epoch 1: loss=13.1445 val_exact=0.0000 (14s)
+epoch 2: loss=2.0490 val_exact=0.5767 (24s)
+epoch 3: loss=0.1590 val_exact=0.9533 (34s)
+epoch 4: loss=0.0442 val_exact=0.9625 (44s)
+epoch 5: loss=0.0269 val_exact=0.9792 (55s)
+epoch 6: loss=0.0126 val_exact=0.9833 (65s)
+epoch 7: loss=0.0059 val_exact=0.9867 (76s)
+epoch 8: loss=0.0037 val_exact=0.9875 (91s)
+epoch 9: loss=0.0028 val_exact=0.9900 (106s)
+epoch 10: loss=0.0024 val_exact=0.9892 (121s)
+UJI ALL: {'n': 2400, 'exact_match': 0.9879, 'cer': 0.0037, 'digit_acc': 0.998, 'latency_ms_mean': 8.39, 'latency_ms_median': 5.92, 'latency_n': 80, 'train_seconds': 120.9, 'epochs': 10, 'device_train': 'mps', 'n_train_images': 10800}
+   clean        EM=1.000 CER=0.000 digit=1.000
+   noise        EM=1.000 CER=0.000 digit=1.000
+   blur         EM=1.000 CER=0.000 digit=1.000
+   perspective  EM=0.960 CER=0.012 digit=0.995
+   dim          EM=1.000 CER=0.000 digit=1.000
+   glare        EM=0.997 CER=0.002 digit=0.999
+   ghost        EM=1.000 CER=0.000 digit=1.000
+   combined     EM=0.947 CER=0.016 digit=0.990

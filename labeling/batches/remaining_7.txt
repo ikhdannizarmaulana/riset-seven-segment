@@ -1,0 +1,17 @@
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/108d8ccc2dc0fffe6f01dce3415b4aba8147cf73.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/03c573f7562841a5d5de3e237c215c36b8e44e23.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0ab5f86e4d729d232d185a664b77b2b049d9b79e.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/17c8125d919a804ffbfbbaa518be8e18e222273b.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0dfc66d0b9f1210f2645725c67e2fcf7b49dfd3d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/17bf0739bf830b20ef259d18788e74d4209d922b.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/181c92338dae4de2c581ac685ac7dbcea317fa56.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/0a1e1c676aa31a9f56818e580d7a2e20689fefba.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/17f734894d183af2a3326a334feb4f706b0f5c21.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/177c0d0896184c7cb5dfc1a482f953ac60da118f.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/11c43b6fc809aa3bc90f41db6edbc60d260ff9ba.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/1cb22f74b22a1ae8f72d71ebfb3baf2939961e5c.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/04f00f08ab175a6b86015b84940ef237946da1b2.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/1abddd3978803e425609f69eba53c499a8d5c03c.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/51bf596a3c477f7944dd6d1fa83da310da375dc0.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/20af9eb08dd82985ebd33947f51bd9268e1bb20a.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0c7b9c85ff3f59d5bb76196258628a785067cb42.jpg

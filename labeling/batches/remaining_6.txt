@@ -1,0 +1,5 @@
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/4534e267bea350e8afdfff3e9c4d0933933b0429.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/144a43741b9b6f7301e4b9c0251593b920f4150d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/19ad5cc9a329660869d5de0aa92d4ca74d54468a.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/1f0abc8ab78273c89174c0fdbe7832c7a61a53d4.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/191fdfd5dbe6f3c98f8c177128349077b1e4c876.jpg

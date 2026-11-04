@@ -1,0 +1,65 @@
+{
+ "cnn_perdigit": {
+  "clean": {
+   "n": 300,
+   "exact_match": 1.0,
+   "cer": 0.0,
+   "digit_acc": 1.0
+  },
+  "ALL": {
+   "n": 2400,
+   "exact_match": 0.995,
+   "cer": 0.0016,
+   "digit_acc": 0.9992,
+   "latency_ms_mean": 3.89,
+   "latency_ms_median": 3.11,
+   "latency_n": 80,
+   "train_seconds": 62.6,
+   "epochs": 6,
+   "device_train": "mps",
+   "n_train_images": 10800
+  },
+  "noise": {
+   "n": 300,
+   "exact_match": 1.0,
+   "cer": 0.0,
+   "digit_acc": 1.0
+  },
+  "blur": {
+   "n": 300,
+   "exact_match": 1.0,
+   "cer": 0.0,
+   "digit_acc": 1.0
+  },
+  "perspective": {
+   "n": 300,
+   "exact_match": 0.99,
+   "cer": 0.0024,
+   "digit_acc": 0.9991
+  },
+  "dim": {
+   "n": 300,
+   "exact_match": 1.0,
+   "cer": 0.0,
+   "digit_acc": 1.0
+  },
+  "glare": {
+   "n": 300,
+   "exact_match": 0.9967,
+   "cer": 0.0008,
+   "digit_acc": 0.999
+  },
+  "ghost": {
+   "n": 300,
+   "exact_match": 1.0,
+   "cer": 0.0,
+   "digit_acc": 1.0
+  },
+  "combined": {
+   "n": 300,
+   "exact_match": 0.9733,
+   "cer": 0.0097,
+   "digit_acc": 0.995
+  }
+ }
+}

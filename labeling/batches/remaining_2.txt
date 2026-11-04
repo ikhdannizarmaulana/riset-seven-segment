@@ -1,0 +1,17 @@
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/09d66d47aa62a60d35fcb38a79cc0694c47962f9.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/0abc6e9c326112c5da6c942cbddde171691c1ac0.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/1622e1262c3371b16db3e742fed5f1237f59b8c0.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/0630d546e1c06b815b400be1b86d97929525a193.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/5d86e39532e6eac079395d645962a455678aced9.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/186371527224f02470bc68dd8d32cefc735e9bb0.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/05e5e706f7654e756c1d4dc0740759f9559ab638.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/c6b10b24c45ce1cbe505f6130b14c503810ee3d6.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/MQ_digital/056bd385ae19c3f5e9e8873db28c7a1266de4a6a.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/089010fdc67f35917e09419320852584afa58f79.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/129685f0d6901a0ea39f675fba67c8f25dd4656d.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/12f3b49b495578fc3faae1bb7dc9905affd92ed4.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/9b53257ee7e2e46b0e2907c5b8aaac4b94712faa.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/1bba22daf4e03295d6b52d6d3aa7a0dc019ab8c0.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/0f7d9a795212d9e140181ec73a32a493af22a100.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/LQ_digital/01655d44829e5a4d8f7deb7113bc62224103a58f.jpg
+/Users/ikhdan/riset-seven-segment/data/github_sachaizadi/Datasets/HQ_digital/e023858ed388731bbccbbc2d6a64983b145b0b4a.jpg

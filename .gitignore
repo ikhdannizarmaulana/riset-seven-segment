@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# Dataset publik (unduh ulang, lihat strategi_data.md) & data yang bisa digenerate ulang
+/data/
+pilot/data/
+pipeline/degraded/
+
+# Traineddata Tesseract (unduh ulang dari github.com/Shreeshrii/tessdata_ssd / tessdata)
+*.traineddata
+
+# Data runtime app (foto & crop yang diunggah)
+app/data/
+app/*.db
+app/*.sqlite*
