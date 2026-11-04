@@ -30,7 +30,7 @@ Hasilnya berupa **aplikasi web**. Foto layar diambil dari HP, aplikasi mendeteks
 | Aplikasi web (MVP, Tesseract saja, ROI manual) | ✅ Jalan: `app/` |
 | Deteksi layar otomatis, CNN dan CRNN di app, evaluasi batch | 🚧 Dikerjakan, lihat [PRD](docs/PRD.md) dan [Issues](https://github.com/ikhdannizarmaulana/riset-seven-segment/issues) |
 
-Rencana lengkap ada di **[docs/PRD.md](docs/PRD.md)**. Pekerjaan dipecah menjadi tiket per tahap di **GitHub Issues** (lihat tiket *Roadmap*).
+Rencana lengkap ada di **[docs/PRD.md](docs/PRD.md)**. Pekerjaan dipecah menjadi 11 tiket per tahap di **GitHub Issues**. Urutan dan dependensinya ada di tiket [#12 Roadmap](https://github.com/ikhdannizarmaulana/riset-seven-segment/issues/12).
 
 ## Cara pakai
 
@@ -59,7 +59,7 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requi
 - Ringkasan data ada di `/summary`, unduh label di `/api/labels.csv`, dokumentasi API di `/docs`.
 - Uji otomatis: `.venv/bin/python -m pytest -q tests/`
 
-> Saat ini engine **CNN dan CRNN di app masih nonaktif** (stub) sampai model ONNX dimasukkan ke `app/models/`. Lihat tiket Tahap 3.
+> Saat ini engine **CNN dan CRNN di app masih nonaktif** (stub) sampai model ONNX dimasukkan ke `app/models/`. Lihat tiket [#8](https://github.com/ikhdannizarmaulana/riset-seven-segment/issues/8).
 
 Detail arsitektur ada di [`app/README_app.md`](app/README_app.md).
 

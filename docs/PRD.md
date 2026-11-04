@@ -4,6 +4,7 @@
 - **Status:** Draft v0.1
 - **Owner:** Ikhdan
 - **Repo:** https://github.com/ikhdannizarmaulana/riset-seven-segment
+- **Pelacak tiket:** [#12 Roadmap](https://github.com/ikhdannizarmaulana/riset-seven-segment/issues/12)
 - **Konteks:** Aplikasi untuk skripsi *"Analisis Komparatif Tesseract Fine-Tuned, CNN Per-Digit, dan CRNN-CTC untuk Pengenalan Angka Seven Segment pada Variasi Kondisi Citra"*. Dokumen ini hanya membahas **pembuatan aplikasi sampai siap pakai**. Penulisan naskah skripsi berada di luar lingkup.
 
 Penanda di dokumen ini:
@@ -126,19 +127,19 @@ flowchart LR
 
 ## 7. Kebutuhan fungsional (dipetakan ke tiket)
 
-| ID | Modul | Isi | Tiket |
+| ID | Modul | Isi | Tiket (GitHub Issue) |
 |---|---|---|---|
-| F0 | Dataset final & split | Gabungkan `labeling/labels_final.csv` ke manifest, tentukan split train/val/test per `split_group`, dan kunci di `data/splits/` | Tahap 0 |
-| F1 | Anotasi bbox layar | Mode anotasi ROI di app untuk folder foto, target ≥ 300 foto berbox (prioritas SachaIZADI, ditambah sebagian dataset publik) | Tahap 1a |
-| F2 | Detektor layar | Baseline OpenCV (kontur/warna) **dan** detektor ringan terlatih **[ASUMSI: YOLOv8n/YOLO11n via ultralytics, lisensi AGPL-3.0, aman untuk repo akademik public]**. Pilih yang terbaik di val, ekspor ONNX. | Tahap 1b |
-| F3 | Prapemrosesan seragam + segmentasi digit | Satu modul `ocr_core/preprocess.py` untuk pilot dan app. Deteksi polaritas LCD/LED yang andal, CLAHE, dan segmentasi digit (proyeksi kolom/kontur) untuk CNN. | Tahap 2a |
-| F4 | Tesseract fine-tuned | `tesstrain` (lstmtraining) mulai dari `eng` dan `ssd`, data sintetis + crop asli train, hasil `sevenseg_ft.traineddata` | Tahap 2b |
-| F5 | CNN per-digit | Latih ulang di sintetis + crop digit asli, input dari segmentasi F3 (bukan oracle), ekspor ONNX | Tahap 2c |
-| F6 | CRNN-CTC | Latih ulang di sintetis + crop asli, augmentasi kondisi, ekspor ONNX | Tahap 2d |
-| F7 | Integrasi engine di app | Isi `ocr/model_engines.py` (ONNX Runtime), pipeline otomatis `/api/predict` (deteksi → crop → OCR), opsi `engine=all` | Tahap 3 |
-| F8 | UI | Alur satu layar untuk HP: foto → hasil 3 engine berdampingan → koreksi → simpan. Overlay bbox. Fallback ROI manual. | Tahap 4 |
-| F9 | Evaluasi batch | CLI `eval/run.py` dan halaman `/eval`. Metrik EM, CER, akurasi digit, akurasi titik desimal, latency. Per kondisi (`conditions` dari label) dan per kualitas HQ/MQ/LQ. Uji McNemar. | Tahap 5 |
-| F10 | Uji end-to-end & dokumentasi | Uji asap 30–50 foto HP sendiri, pytest dan CI GitHub Actions, README pemakaian, skrip demo | Tahap 6 |
+| F0 | Dataset final & split | Gabungkan `labeling/labels_final.csv` ke manifest, tentukan split train/val/test per `split_group`, dan kunci di `data/splits/` | Tahap 0 (#1) |
+| F1 | Anotasi bbox layar | Mode anotasi ROI di app untuk folder foto, target ≥ 300 foto berbox (prioritas SachaIZADI, ditambah sebagian dataset publik) | Tahap 1a (#2) |
+| F2 | Detektor layar | Baseline OpenCV (kontur/warna) **dan** detektor ringan terlatih **[ASUMSI: YOLOv8n/YOLO11n via ultralytics, lisensi AGPL-3.0, aman untuk repo akademik public]**. Pilih yang terbaik di val, ekspor ONNX. | Tahap 1b (#3) |
+| F3 | Prapemrosesan seragam + segmentasi digit | Satu modul `ocr_core/preprocess.py` untuk pilot dan app. Deteksi polaritas LCD/LED yang andal, CLAHE, dan segmentasi digit (proyeksi kolom/kontur) untuk CNN. | Tahap 2a (#4) |
+| F4 | Tesseract fine-tuned | `tesstrain` (lstmtraining) mulai dari `eng` dan `ssd`, data sintetis + crop asli train, hasil `sevenseg_ft.traineddata` | Tahap 2b (#5) |
+| F5 | CNN per-digit | Latih ulang di sintetis + crop digit asli, input dari segmentasi F3 (bukan oracle), ekspor ONNX | Tahap 2c (#6) |
+| F6 | CRNN-CTC | Latih ulang di sintetis + crop asli, augmentasi kondisi, ekspor ONNX | Tahap 2d (#7) |
+| F7 | Integrasi engine di app | Isi `ocr/model_engines.py` (ONNX Runtime), pipeline otomatis `/api/predict` (deteksi → crop → OCR), opsi `engine=all` | Tahap 3 (#8) |
+| F8 | UI | Alur satu layar untuk HP: foto → hasil 3 engine berdampingan → koreksi → simpan. Overlay bbox. Fallback ROI manual. | Tahap 4 (#9) |
+| F9 | Evaluasi batch | CLI `eval/run.py` dan halaman `/eval`. Metrik EM, CER, akurasi digit, akurasi titik desimal, latency. Per kondisi (`conditions` dari label) dan per kualitas HQ/MQ/LQ. Uji McNemar. | Tahap 5 (#10) |
+| F10 | Uji end-to-end & dokumentasi | Uji asap 30–50 foto HP sendiri, pytest dan CI GitHub Actions, README pemakaian, skrip demo | Tahap 6 (#11) |
 
 ## 8. Kebutuhan non-fungsional
 
