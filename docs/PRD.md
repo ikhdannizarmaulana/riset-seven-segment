@@ -26,7 +26,7 @@ Kondisi repo saat ini:
 |---|---|---|
 | `pilot/`: generator data sintetis, baseline Tesseract, CNN per-digit, CRNN-CTC | [ADA] | Pada data sintetis: CNN EM 0,995, CRNN 0,988, Tesseract `7seg` 0,618. CNN masih memakai **bbox digit oracle**. Tesseract belum di-fine-tune sendiri. |
 | `pipeline/`: penyatuan dataset publik dan generator degradasi | [ADA] | `pipeline/unified/manifest.csv`: 1.841 citra dari 6 sumber |
-| `labeling/`: label ulang 858 foto pompa BBM (SachaIZADI) | [ADA] | 779 layak training. Label asli dataset terbukti **dibulatkan ke atas**. |
+| `labeling/`: label ulang 858 foto pompa BBM (SachaIZADI) | [ADA] | 779 layak training. Label asli dataset **tidak konsisten**: umumnya desimal dibuang, tetapi 93 foto dinaikkan +1. |
 | `app/`: FastAPI + HTML | [ADA] sebagian | Tesseract jalan. CNN dan CRNN masih **stub**. ROI dipilih **manual**. Belum ada mode evaluasi batch. |
 
 **Masalah inti yang diselesaikan PRD ini:** belum ada aplikasi yang bisa menerima **foto asli dari HP** dan **otomatis** membaca angkanya dengan ketiga metode, lalu membandingkan akurasi dan waktunya dengan cara yang adil.
@@ -39,12 +39,14 @@ Kondisi repo saat ini:
 3. **G3 — Perbandingan adil.** Ketiga engine memakai crop layar, data latih, dan set uji yang sama, lalu diukur di mesin yang sama.
 4. **G4 — Mode evaluasi batch.** Satu set uji dijalankan ke ketiga engine sekaligus. Keluarannya CSV prediksi, metrik per engine × kondisi citra, dan uji signifikansi.
 5. **G5 — Siap demo.** Bisa dipakai dari HP lewat Wi-Fi yang sama, dengan dokumentasi instalasi yang bisa diikuti orang lain.
+6. **G6 — Mudah dipakai orang awam.** Pengguna cukup **unggah foto**, sisanya otomatis. Tidak ada istilah teknis di layar utama, dan UI memakai **design system** yang konsisten (#14, #15).
+7. **G7 — Cara kerja metode terlihat.** Selama proses, app menampilkan **langkah demi langkah** pemrosesan dan cara tiap metode membaca angka, memakai gambar antara yang asli dari foto itu (#16). Ini sekaligus bahan demo untuk dosen.
 
 ### Non-tujuan
 - Penulisan naskah Bab 1–5.
 - Aplikasi Android/iOS native dan inference di perangkat (on-device). Ini dicatat sebagai pengembangan lanjutan.
 - Hardware IoT (ESP32-CAM, Raspberry Pi).
-- Membaca meter jarum/analog atau meter roda mekanik (contoh: `12490a1c…` di dataset SachaIZADI).
+- Membaca meter jarum/analog atau meter roda mekanik (contoh: `12490ba7…` di dataset SachaIZADI).
 - Login, multi-user, dan deploy publik di internet.
 
 ### Asumsi
@@ -72,6 +74,9 @@ Kondisi repo saat ini:
 - **US6** Sebagai peneliti, saya ingin mengoreksi hasil yang salah dan menyimpannya beserta metadata, agar data sulit bisa ditambahkan ke data latih.
 - **US7** Sebagai penguji, saya ingin membuka aplikasi dari HP di jaringan yang sama, agar demo bisa dilakukan di ruang sidang.
 - **US8** Sebagai peneliti, saya ingin pembagian train/val/test dikunci dalam file, agar foto yang sama tidak bocor ke set uji.
+- **US9** Sebagai pengguna awam, saya ingin cukup mengunggah foto tanpa mengisi parameter apa pun, agar bisa langsung mendapat angka tanpa paham istilah teknis.
+- **US10** Sebagai penguji/dosen, saya ingin melihat langkah demi langkah bagaimana foto diproses dan bagaimana tiap metode membaca angka, agar cara kerja metode bisa dipahami secara visual.
+- **US11** Sebagai pengguna, saya ingin tampilan yang rapi dan konsisten di HP maupun laptop, agar app nyaman dipakai dan meyakinkan saat demo.
 
 ## 5. Acceptance criteria (Given / When / Then)
 
@@ -98,6 +103,19 @@ Kondisi repo saat ini:
 
 **US7 — Akses dari HP**
 - Given laptop dan HP di Wi-Fi yang sama, When HP membuka `http://<IP-laptop>:8000`, Then tombol "Foto" membuka kamera belakang dan alur US1 berjalan.
+
+**US9 — Unggah saja, sisanya otomatis (#14)**
+- Given pengguna baru membuka halaman utama, When memilih satu foto, Then angka hasil ketiga metode tampil tanpa pengguna mengisi field apa pun (≤ 2 ketukan).
+- Given halaman utama, When diperiksa, Then tidak ada istilah ROI, CLAHE, threshold, Otsu, engine, preprocessing, atau labels.csv. Semua parameter itu hanya ada di "Mode peneliti".
+- Given layar tidak terdeteksi, When proses berjalan, Then muncul kotak "area layar" yang bisa diseret, bukan form koordinat.
+
+**US10 — Visualisasi proses step-by-step (#16)**
+- Given foto diunggah, When diproses, Then tampil stepper berisi langkah: foto asli → deteksi layar → potong → grayscale → samakan terang-gelap → kontras (CLAHE) → threshold → cara kerja Tesseract / CNN (potongan digit + probabilitas) / CRNN (prediksi per kolom → CTC) → hasil. Setiap langkah memakai gambar asli dari foto itu dan menampilkan waktunya.
+- Given mode presentasi, When menekan ←/→ (laptop) atau swipe (HP), Then langkah berpindah maju/mundur.
+- Given satu metode belum tersedia, When stepper sampai di langkahnya, Then tampil "Metode belum tersedia" beserta alasan, dan langkah lain tetap jalan.
+
+**US11 — Design system (#15)**
+- Given semua halaman app, When diperiksa, Then komponen dan warna berasal dari satu design system dan token yang sama, skor Lighthouse Accessibility ≥ 90 (mobile), dan app tetap jalan tanpa internet.
 
 **US8 — Split terkunci**
 - Given manifest final, When skrip split dijalankan, Then setiap `split_group` hanya muncul di satu split, proporsi kualitas HQ/MQ/LQ di train/val/test berbeda ≤ 5 poin persen, dan file split di-commit.
@@ -138,6 +156,9 @@ flowchart LR
 | F6 | CRNN-CTC | Latih ulang di sintetis + crop asli, augmentasi kondisi, ekspor ONNX | Tahap 2d (#7) |
 | F7 | Integrasi engine di app | Isi `ocr/model_engines.py` (ONNX Runtime), pipeline otomatis `/api/predict` (deteksi → crop → OCR), opsi `engine=all` | Tahap 3 (#8) |
 | F8 | UI | Alur satu layar untuk HP: foto → hasil 3 engine berdampingan → koreksi → simpan. Overlay bbox. Fallback ROI manual. | Tahap 4 (#9) |
+| F8a | Design system | Satu design system + design token: **Web Awesome Core** (MIT, penerus Shoelace; diputuskan 5 Nov 2026), di-host lokal agar jalan offline, mobile-first | Tahap 4a (#15) |
+| F8b | Alur sederhana | Unggah foto saja; deteksi, prapemrosesan, dan ketiga metode berjalan otomatis; metadata otomatis; istilah teknis dipindah ke "Mode peneliti" | Tahap 4b (#14) |
+| F8c | Visualisasi proses | `/api/predict?explain=1` mengembalikan gambar antara + waktu per langkah. Stepper auto-play + mode presentasi. Visual khusus CNN (potongan digit + probabilitas) dan CRNN (prediksi per kolom → CTC). | Tahap 4c (#16) |
 | F9 | Evaluasi batch | CLI `eval/run.py` dan halaman `/eval`. Metrik EM, CER, akurasi digit, akurasi titik desimal, latency. Per kondisi (`conditions` dari label) dan per kualitas HQ/MQ/LQ. Uji McNemar. | Tahap 5 (#10) |
 | F10 | Uji end-to-end & dokumentasi | Uji asap 30–50 foto HP sendiri, pytest dan CI GitHub Actions, README pemakaian, skrip demo | Tahap 6 (#11) |
 

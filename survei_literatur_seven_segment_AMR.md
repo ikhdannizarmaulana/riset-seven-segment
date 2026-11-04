@@ -1,6 +1,24 @@
 # Survei Literatur: Pengenalan Digit Seven-Segment / AMR / LCD-LED (2018–2026)
 Disusun: 4 Nov 2026. Legenda verifikasi: **[V]** = angka/klaim dibaca langsung dari halaman/PDF; **[S]** = hanya dari snippet mesin pencari / belum dibuka penuh; **[?]** = tidak ditemukan/tidak tercantum.
 
+> ### Cara membaca dokumen ini (dan hubungannya dengan skripsi)
+> **Apa isinya:** daftar penelitian terdahulu tentang membaca angka di layar alat ukur. Istilah umumnya **AMR** (*Automatic Meter Reading*, pembacaan meter otomatis). Isinya mencakup alat yang sudah ada, dataset publik, masalah yang belum terpecahkan, dan peluang riset S1.
+>
+> **Kenapa penting:** Bab 2 (Tinjauan Pustaka) wajib menunjukkan apa yang sudah dilakukan orang lain. Di sidang, dosen hampir pasti bertanya "apa bedanya dengan penelitian sebelumnya?"
+>
+> **Bagaimana membacanya:**
+> - **Bagian 1 (tabel paper):** fokus pada kolom *Metode* dan *Hasil*. Paper yang paling relevan untuk skripsi ini:
+>   - #1–#2 Laroca: pipeline deteksi → baca, CRNN.
+>   - #4 Finnegan: latih dengan data sintetis.
+>   - #5 CNN tensimeter: CNN vs Tesseract per kualitas foto.
+>   - #13 ITM 2024: model umum tanpa fine-tune hanya 56,97%; titik desimal jadi sumber error utama.
+>   - #19 Telkom Purwokerto: riset Indonesia serupa.
+> - **Bagian "Alat/baseline non-paper":** `tessdata_ssd` adalah traineddata seven segment pihak ketiga yang dipakai di pilot sebagai pembanding. Catatannya penting: model itu dilatih dengan font sintetis.
+> - **Bagian 3 (masalah terbuka):** silau, titik desimal, dan kegagalan model umum. Ini dasar argumen "kenapa skripsi ini perlu".
+> - **Bagian 4 (celah riset):** skripsi ini mengambil gabungan **celah #2** (titik desimal sebagai metrik terpisah) dan **celah #3** (perbandingan beberapa metode per kondisi citra). Ketiga metode yang dibandingkan adalah Tesseract fine-tuned, CNN per-digit, dan CRNN-CTC. Celah lain (#1, #4–#8) bisa dijadikan "saran penelitian lanjutan" di Bab 5.
+>
+> **Catatan pemutakhiran (5 Nov 2026):** bagian 4 menyebut "Colab". Keputusan terbaru: training dijalankan lokal di laptop (Apple M4/MPS), dengan Colab sebagai cadangan. Klaim bertanda **[S]** atau **[?]** wajib dibuka dan dibaca langsung sebelum dikutip di naskah. Ringkasan posisi riset dalam bahasa sederhana ada di `docs/PANDUAN_SIDANG.md` bagian 9.
+
 ## 1. Tabel paper kunci
 
 | # | Judul (venue, tahun) | Metode | Dataset | Hasil dilaporkan | URL |

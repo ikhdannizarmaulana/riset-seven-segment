@@ -91,7 +91,7 @@ cd pipeline && ../pilot/.venv/bin/python unify.py   # → pipeline/unified/manif
 ### 4. Label foto pompa BBM (`labeling/`)
 
 - 858 foto dataset SachaIZADI dilabeli ulang secara buta oleh AI vision. Sebanyak 102 foto sulit dibaca ulang dengan zoom.
-- Temuan: label asli dataset **dibulatkan ke atas** (layar `128.28` → label `129`).
+- Temuan: label asli dataset **tidak konsisten**. Umumnya desimal dibuang (`66.02` → `66`), tetapi 93 foto dinaikkan +1 (`128.28` → `129`). Jadi label asli tidak bisa dipakai mentah-mentah.
 - Hasil final ada di `labeling/labels_final.csv`. Kolom `usable_for_training` bernilai `true` untuk 779 foto.
 
 | status_vs_original | jumlah |

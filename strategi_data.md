@@ -9,6 +9,20 @@
 - **[S] Snippet:** diambil dari cuplikan hasil pencarian atau survei sebelumnya, belum saya buka sendiri. Cek dulu sebelum dikutip.
 - **[E] Estimasi:** perkiraan saya untuk perencanaan, bukan data terukur.
 
+> ### ⚠️ Status keputusan terbaru (5 November 2026). Baca ini dulu.
+> Dokumen ini ditulis **sebelum** pelabelan ulang foto pompa BBM. Beberapa rekomendasinya sudah **diganti** oleh keputusan berikut:
+>
+> | Rekomendasi di dokumen ini | Keputusan sekarang | Alasan |
+> |---|---|---|
+> | "Data utama tetap perlu dikumpulkan sendiri" (Bagian 1, poin 1) dan target ±1.500+ foto sendiri | **Tidak ada pengumpulan data baru.** Data latih = sintetis + bagian train foto pompa BBM SachaIZADI. Uji utama = bagian test SachaIZADI. | 858 foto SachaIZADI sudah dilabel ulang lengkap dengan desimal (779 layak, lihat `labeling/README.md`), jadi foto nyata berlabel sudah cukup untuk perbandingan metode. |
+> | SachaIZADI hanya untuk uji lintas-dataset | SachaIZADI menjadi **data utama** (latih/val/test, dibagi per grup foto, tiket #1) | Labelnya sudah diperbaiki. Label asli ternyata tidak konsisten (desimal umumnya dibuang, 93 foto dinaikkan +1). |
+> | Foto sendiri sebagai set uji utama | Foto HP sendiri (±30–50) **hanya uji coba aplikasi** end-to-end | Bukan untuk training dan bukan angka utama |
+> | Dataset publik lain sebagai uji eksternal | **Tetap** | Mengukur generalisasi ke alat lain |
+>
+> Yang **tetap berlaku** dari dokumen ini: hasil verifikasi akses dan lisensi tiap dataset (Bagian 2), dan prinsip pembagian data per grup agar tidak bocor. Rencana terbaru ada di `docs/PRD.md` dan tiket #12 (Roadmap).
+>
+> **Cara membaca dokumen ini:** Bagian 1 adalah ringkasan keputusan (lama). Bagian 2 berisi tabel verifikasi tiap dataset: bisa diunduh atau tidak, ukurannya, format labelnya, lisensinya, dan hasil hitung aktual. Bagian selanjutnya membahas rencana pengumpulan data sendiri, yang kini **tidak dipakai** tetapi disimpan sebagai arsip dan bahan "saran" di Bab 5.
+
 ---
 
 ## 1. Ringkasan untuk keputusan

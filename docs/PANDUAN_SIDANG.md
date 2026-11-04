@@ -76,6 +76,34 @@ Membuat gambar lebih "bersih" sebelum dibaca:
 
 **Fine-tuning itu apa?** Melanjutkan training model yang sudah pintar (pre-trained) dengan data khusus kita. Lebih cepat dan butuh data lebih sedikit daripada melatih dari nol.
 
+#### Detail: "fine-tune sendiri" pada Tesseract (tiket #5)
+
+**Apa bedanya dengan pilot?**
+
+| | Di pilot (sekarang) | Yang wajib di skripsi |
+|---|---|---|
+| Model | `7seg.traineddata` / `ssd.traineddata` | `sevenseg_ft.traineddata` (nama usulan) |
+| Siapa yang melatih | **Orang lain** (Shreeshrii, GitHub), dengan font dan data milik dia | **Kita sendiri**, dengan data kita |
+| Data latih | Tidak diketahui persis | Sintetis + potongan layar foto pompa BBM bagian **train** |
+| Status | Hanya baseline pembanding | Belum dikerjakan |
+
+**Analogi:** model `eng` itu seperti orang yang sudah lancar membaca koran. Fine-tuning adalah memberinya latihan tambahan khusus membaca angka di layar pompa bensin. Dia tidak belajar dari nol, cukup dilatih tambahan.
+
+**Langkahnya:**
+1. **Siapkan data latih.** Setiap contoh berupa satu gambar baris angka (`.png`) dan file teks berisi jawabannya (`.gt.txt`, misalnya `128.28`). Sumbernya gambar sintetis dari generator dan potongan layar foto bagian train, yang diproses dengan prapemrosesan seragam dari #4.
+2. **Jalankan `tesstrain`**, tool resmi Tesseract (di dalamnya ada `lstmtraining`). Training mulai dari model `eng`, dan sebagai pembanding juga dari `ssd`. Jaringan LSTM di dalam Tesseract menyesuaikan bobotnya dengan data kita.
+3. **Pantau error di data val** (CER val). Pilih hasil terbaik dan hentikan sebelum model mulai hafal (*overfitting*).
+4. **Hasilnya file `sevenseg_ft.traineddata`**, yang dipakai di aplikasi (`TESS_LANG=sevenseg_ft`) dan diuji di data test.
+5. **Batasi karakter keluaran** dengan whitelist `0123456789.`, supaya Tesseract tidak mengeluarkan huruf.
+
+**Kenapa wajib:**
+- Judul skripsi menyebut **"Tesseract Fine-Tuned"**.
+- **Keadilan:** CNN dan CRNN dilatih dengan data kita. Kalau Tesseract tidak dilatih dengan data yang sama, perbandingannya berat sebelah.
+
+**Urutan pengerjaan:** #13 (validasi label) → #1 (pembagian data) → #4 (prapemrosesan seragam) → **#5 (fine-tune Tesseract)**. Tiket #6 (CNN) dan #7 (CRNN) dikerjakan paralel dengan #5.
+
+**Pertanyaan dosen yang mungkin muncul:** "Kenapa tidak melatih Tesseract dari nol?" Jawab: data kita tidak cukup untuk melatih dari nol. Fine-tuning memanfaatkan kemampuan dasar membaca yang sudah ada, sehingga cukup dengan data sedikit. Ini juga cara yang direkomendasikan dokumentasi Tesseract untuk font atau domain baru.
+
 ### [4] Output
 Teks angka, confidence (tingkat keyakinan), dan waktu proses tiap tahap (deteksi, prapemrosesan, OCR) dalam milidetik.
 
@@ -97,7 +125,7 @@ Sumber: `strategi_data.md`, `pipeline/unified/counts.txt`.
 
 ### 4.2 Cerita pelabelan ulang (temuan penting, bisa dipakai di Bab 3/4)
 1. Label asli SachaIZADI hanya berisi **angka bulat liter**, padahal layar menampilkan desimal (misalnya `66.02`).
-2. Saat dicek, label asli ternyata **dibulatkan ke atas**: layar `128.28` dilabeli `129`, dan `63.96` dilabeli `64`.
+2. Saat dicek, label asli ternyata **tidak konsisten**. Sebagian besar hanya membuang desimal (layar `66.02` → `66`). Tetapi **93 foto** dinaikkan +1: layar `128.28` dilabeli `129`, dan `63.96` dilabeli `64`. Yang dinaikkan pun tidak hanya desimal ≥ .50, karena `128.28` juga ikut naik. Rincian lengkap ada di `labeling/README.md`.
    **Akibatnya:** kalau label asli dipakai mentah-mentah, OCR yang membaca dengan **benar** justru dihitung **salah**.
 3. Karena itu ke-858 foto dilabel ulang lengkap dengan desimalnya:
    - Pass 1: semua foto dibaca dengan model AI vision secara **buta**, tanpa melihat label asli. Karakter yang tidak terbaca ditandai `?`.
@@ -107,18 +135,41 @@ Sumber: `strategi_data.md`, `pipeline/unified/counts.txt`.
 | Status | Jumlah | Arti |
 |---|---|---|
 | match | 688 | Angka bulatnya sama |
-| orig_rounded_up | 93 | Label asli = bacaan + 1, sesuai pola pembulatan ke atas |
+| orig_rounded_up | 93 | Label asli = bacaan + 1 (label asli dinaikkan, tidak konsisten) |
 | unreadable | 74 | Masih ada karakter yang tidak terbaca (silau, terpotong) |
 | mismatch | 3 | Beda jauh. Perlu dicek manual, kemungkinan label asli yang salah. |
 
 Sumber: `labeling/labels_final.csv`. Tingkat keyakinan: 516 tinggi, 326 sedang, 16 rendah.
 
-⚠️ **Penting soal kejujuran akademik:** pelabelan ulang dibantu **model AI**. Ini harus **diungkapkan** di Bab 3 dan **divalidasi manusia**. Saran: periksa manual sampel acak (misalnya 100 foto), lalu laporkan persentase kesepakatan manusia vs AI. Validasi ini **belum dilakukan**; tambahkan sebagai tugas.
+⚠️ **Penting soal kejujuran akademik:** pelabelan ulang dibantu **model AI**. Ini harus **diungkapkan** di Bab 3 dan **divalidasi manusia**. Saran: periksa manual sampel acak (misalnya 100 foto), lalu laporkan persentase kesepakatan manusia vs AI. Validasi ini **belum dilakukan**. Fiturnya akan dibuat di aplikasi (tiket #13, lihat 4.4).
 
-### 4.3 Pembagian data (rencana, tiket #1)
-- Train/val/test 60/20/20, dibagi **per grup foto** supaya foto yang mirip tidak bocor ke data uji.
-- Foto `unreadable` dikeluarkan dari metrik utama dan dilaporkan terpisah.
-- Dataset publik lain hanya dipakai sebagai uji eksternal, tidak untuk latih.
+### 4.3 Pembagian data: mana untuk latih, mana untuk uji (rencana, tiket #1)
+
+**Kenapa data harus dibagi?** Model yang diuji dengan foto yang sudah pernah dilihatnya saat latihan akan terlihat pintar padahal hanya hafal. Analoginya seperti ujian yang soalnya sama persis dengan latihan. Karena itu data dibagi tiga, dan bagian uji **tidak boleh disentuh** sampai evaluasi akhir.
+
+| Data | Peran | Analogi |
+|---|---|---|
+| Sintetis (generator) | **Latih** | Buku latihan soal yang bisa dicetak sebanyak apa pun |
+| Foto pompa BBM, bagian **train** (±60%) | **Latih** | Latihan soal dari ujian tahun lalu |
+| Foto pompa BBM, bagian **val** (±20%) | **Memilih model terbaik** saat training (kapan berhenti, setelan mana yang dipakai) | Tryout |
+| Foto pompa BBM, bagian **test** (±20%) | **Uji utama skripsi**. Angka di Bab 4 diambil dari sini. | Ujian sesungguhnya |
+| Dataset publik lain (tensimeter, LED, meter) | **Uji eksternal**: apakah model tetap bisa membaca alat yang belum pernah dilihat | Ujian dari sekolah lain |
+| Foto HP sendiri (±30–50) | **Uji coba aplikasi** end-to-end saja. Bukan untuk latih, bukan angka utama. | Gladi bersih sebelum demo |
+
+Aturan pembagian:
+- Pembagian dilakukan **per grup foto** (`split_group`), supaya foto yang hampir sama tidak terpisah ke latih dan uji. Kalau sampai terpisah, itu disebut **kebocoran data** (*data leakage*).
+- Proporsi kualitas HQ/MQ/LQ dibuat seimbang di ketiga bagian.
+- Foto `unreadable` dan yang belum layak dikeluarkan dari metrik utama, lalu dilaporkan terpisah.
+- Hasil pembagian disimpan sebagai file dan di-commit, sehingga semua eksperimen memakai pembagian yang sama dan bisa diulang.
+
+Jawaban singkat bila dosen bertanya: *"Data uji tidak pernah dipakai untuk training. Pembagiannya per grup foto, dikunci dalam file, dan foto HP saya hanya untuk uji coba aplikasi."*
+
+### 4.4 Validasi manusia atas label AI (tiket #13)
+- **Apa:** fitur di aplikasi (`/validate`). Foto ditampilkan bersama label dari AI, lalu kamu memilih **Setuju / Koreksi / Tidak terbaca**.
+- **Kenapa:** label dibuat oleh AI, jadi harus ada bukti bahwa manusia sudah memeriksanya. Bukti itu berupa catatan per foto (siapa, kapan, keputusan) dan angka **persentase kesepakatan manusia vs AI**.
+- **Bagaimana dipakai di skripsi:** validasi sampel acak (misalnya 100 foto) dengan seed tetap. Hasilnya ditulis di Bab 3, misalnya: "100 sampel divalidasi manual; kesepakatan X%; Y label dikoreksi." Foto berkeyakinan rendah dan 3 foto `mismatch` juga divalidasi.
+- **Efek ke dataset:** kalau ada label dari manusia, label itu yang dipakai (`label_source=human`). Kalau tidak ada, label AI yang dipakai (`label_source=ai`).
+- **Status:** belum dibuat (#13).
 
 ---
 
@@ -171,7 +222,8 @@ Sumber: `labeling/labels_final.csv`. Tingkat keyakinan: 516 tinggi, 326 sedang, 
 - Training ulang CNN dan CRNN dengan foto nyata, lalu ekspor ke app (#6, #7, #8).
 - UI tiga engine berdampingan (#9).
 - Evaluasi pada foto nyata, metrik per kondisi, dan McNemar (#10). **Ini hasil utama skripsi.**
-- Validasi manusia atas label AI (lihat 4.2).
+- Fitur dan proses validasi manusia atas label AI (#13, lihat 4.4).
+- Tampilan aplikasi: design system (#15), alur unggah-saja yang otomatis (#14), dan layar proses langkah demi langkah (#16).
 
 ---
 
@@ -268,10 +320,10 @@ Benar, dan itu disadari. Ada tiga sebabnya: (1) latih dan uji dari generator yan
 Lihat bagian 4.1: data sintetis, 858 foto pompa BBM (779 layak), dan ±495 citra publik lain untuk uji eksternal.
 
 **Q11. Kenapa tidak mengumpulkan foto sendiri?**
-Foto nyata dengan beragam kondisi sudah tersedia. Tantangan utamanya justru **kualitas label**, dan itu sudah diperbaiki. Foto HP sendiri (30–50 foto) dipakai sebagai uji end-to-end aplikasi.
+Foto nyata dengan beragam kondisi sudah tersedia. Tantangan utamanya justru **kualitas label**, dan itu sudah diperbaiki. Foto HP sendiri (30–50 foto) hanya dipakai sebagai uji coba aplikasi end-to-end, bukan untuk training dan bukan angka utama (lihat 4.3).
 
 **Q12. Bagaimana labelnya dibuat? Bisa dipercaya?**
-Label dibuat ulang secara buta oleh model AI vision. Karakter yang ragu diberi tanda `?` dan tidak ditebak. Foto sulit dibaca ulang dengan zoom. Konsistensinya terlihat dari perbandingan dengan label asli: 688 cocok, dan 93 sisanya sesuai pola pembulatan ke atas. Hanya 3 yang beda jauh. Ditambah validasi manual sampel acak *(lakukan dulu sebelum sidang)*.
+Label dibuat ulang secara buta oleh model AI vision. Karakter yang ragu diberi tanda `?` dan tidak ditebak. Foto sulit dibaca ulang dengan zoom. Konsistensinya terlihat dari perbandingan dengan label asli: 688 cocok, dan 93 sisanya hanya beda +1 karena label asli dinaikkan. Hanya 3 yang beda jauh. Ditambah validasi manual sampel acak lewat fitur `/validate` di aplikasi, yang mencatat siapa memvalidasi, kapan, dan persentase kesepakatannya *(tiket #13; lakukan sebelum sidang)*.
 
 **Q13. Bolehkah memakai AI untuk melabel?**
 Boleh, asal **diungkapkan** dan **divalidasi**. Ini juga praktik umum (pseudo-labeling, misalnya Sensors 2026 memakai pseudo-label). Ikuti kebijakan kampus soal penggunaan AI.
@@ -305,6 +357,22 @@ Fokus skripsi adalah perbandingan metode. Web app membuat ketiga engine jalan di
 
 **Q22. Kalau layar tidak terdeteksi?**
 Aplikasi meminta pengguna menggambar kotak layar secara manual sebagai cadangan.
+
+**Q22a. Bagaimana pengguna memakai aplikasinya?** *(rencana #14, #15)*
+Cukup **unggah atau ambil foto**. Deteksi layar, prapemrosesan, dan ketiga metode berjalan otomatis, lalu hasilnya tampil berdampingan. Pengguna hanya ditanya "Apakah angkanya benar?". Semua parameter teknis disembunyikan di "Mode peneliti". Tampilannya memakai **design system**, yaitu kumpulan komponen dan aturan visual yang seragam, sehingga konsisten dan nyaman di HP.
+
+**Q22b. Bisa tunjukkan bagaimana metodenya bekerja?** *(rencana #16)*
+Bisa. Saat memproses, aplikasi menampilkan **langkah demi langkah dengan gambar asli dari foto itu**, bukan animasi buatan:
+foto asli → kotak deteksi layar → potongan layar → grayscale → penyamaan terang-gelap LCD/LED → peningkatan kontras (CLAHE) → threshold → cara kerja tiap metode → hasil.
+
+Visual cara kerja tiap metode:
+- **Tesseract:** gambar input akhir dan teks yang dibaca.
+- **CNN:** kotak potongan tiap digit, plus grafik batang keyakinan 0–9 untuk tiap digit.
+- **CRNN:** tebakan per kolom (misalnya `1 1 _ 2 2 _ . 5`), lalu digabung dan blank dibuang menjadi `12.5`. Inilah cara kerja CTC.
+
+Setiap langkah menampilkan waktu prosesnya. Saat presentasi, langkah bisa dimajukan dan dimundurkan satu per satu.
+
+**Kenapa fitur ini berguna untuk sidang:** dosen bisa melihat langsung bahwa (1) ketiga metode menerima input yang sama, yaitu prinsip keadilan, (2) di mana metode gagal, misalnya potongan digit CNN yang salah pada foto silau, dan (3) bahwa angkanya berasal dari proses nyata, bukan hasil yang ditempel.
 
 ### F. Keterbatasan & lanjutan
 **Q23. Apa keterbatasan penelitianmu?**
