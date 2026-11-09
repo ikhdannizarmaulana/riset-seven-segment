@@ -12,6 +12,7 @@
 |---|---|---|---|
 | `unify.py` | Membaca 5 dataset publik (+1 turunan per-digit), mengubah labelnya ke format seragam, menandai label yang meragukan, dan membuat grup anti-bocor. | Setiap dataset punya format label sendiri (CSV, YOLO, XML, nama file). Tanpa disatukan, setiap engine dan evaluasi harus menulis pembaca sendiri, dan itu rawan beda perlakuan. | `unified/manifest.csv` (1.841 baris), `unified/counts.csv`, `unified/counts.txt` |
 | `degrade.py` | Menerapkan 8 jenis degradasi × 3 level pada citra, dengan hasil yang **sama persis** setiap kali dijalankan. | Untuk menjawab pertanyaan inti skripsi, "engine mana paling tahan pada kondisi X?", dibutuhkan kondisi yang **terkontrol**: label pasti benar dan tingkat gangguannya diketahui. | Folder citra + `degradation_manifest.csv` |
+| `finalize.py` | Menggabungkan label desimal `labels_final.csv` ke manifest, membagi SachaIZADI ke train/val/test secara anti-bocor (per `split_group`) dan terstratifikasi (HQ/MQ/LQ), serta mengunci split. | Memastikan satu sumber kebenaran data eksperimen yang deterministik dan mencegah kebocoran data (*data leakage*) antara train, val, dan test. | `unified/manifest.csv` (terupdate), `data/splits/{train,val,test,external_test,excluded}.csv` |
 
 Analogi: `unify.py` itu seperti **menyalin rapor dari 5 sekolah** yang formatnya berbeda ke satu buku induk yang kolomnya sama. `degrade.py` itu seperti **ujian ketahanan di laboratorium**: barang yang sama dijatuhkan dari ketinggian 1, 2, dan 3 meter supaya bisa dibandingkan.
 
@@ -28,7 +29,7 @@ flowchart LR
     M -.label desimal SachaIZADI.-> L[labeling/labels_final.csv]
 ```
 
-> **Penting:** di `manifest.csv`, label SachaIZADI masih **label asli (bilangan bulat)**. Label desimal hasil pelabelan ulang ada di `labeling/labels_final.csv` (lihat `labeling/README.md`). Penggabungan keduanya termasuk pekerjaan tiket **#1** dan **belum dilakukan**.
+> **Status Tahap 0 (#1):** Selesai. Label desimal dari `labeling/labels_final.csv` telah digabungkan ke `pipeline/unified/manifest.csv` via `pipeline/finalize.py`. Dataset SachaIZADI yang layak (779 foto) telah dibagi dan dikunci ke `data/splits/train.csv` (468), `val.csv` (156), dan `test.csv` (155), dataset eksternal ke `external_test.csv` (983), serta foto tidak layak ke `excluded.csv` (79). Bebas kebocoran (*zero leakage*).
 
 ---
 

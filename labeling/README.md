@@ -218,7 +218,10 @@ Ketiganya berkualitas **HQ**, ikut Pass 2, dan dibaca AI dengan keyakinan `high`
 | `f655c28f9f98…` | `76.08` | `73` | Zoom: desimal pertama tanpa segmen tengah (0), kedua dengan segmen tengah (8) | idem |
 | `fc302f8fddf7…` | `57.00` | `51` | Zoom: 5, 7 (batang atas + vertikal kanan), titik desimal, dua 0 | idem |
 
-Ketiganya **dikeluarkan** dari data (`usable_for_training=False`) sampai ada keputusan manusia. Ini sikap konservatif (hati-hati): lebih baik kehilangan 3 foto daripada memasukkan label yang meragukan.
+**Keputusan Verifikasi Manual (Tahap 0 / Tiket #1):**
+Pemeriksaan ulang atas log zoom visual dan segmen citra mengonfirmasi bahwa label asli SachaIZADI (`191`, `73`, `51`) berbeda jauh dari tampilan fisik display (`113.00`, `76.08`, `57.00`). Perbedaan ini merupakan galat pengetikan (*typo*) pada ground truth asli dataset.
+
+**Keputusan final:** Demi menjaga integritas data latih dan uji, ketiga foto ini **dikeluarkan secara permanen** dari split utama `train`, `val`, dan `test` (`usable_for_training=False`). Ketiganya dicatat dalam `data/splits/excluded.csv` dengan alasan `mismatch_label_discrepancy`. Dengan kebijakan konservatif ini, seluruh data pada split utama terjamin bersih dan bebas dari anomali label.
 
 ### 6.2 Kasus `12490…`: dua file dengan awalan mirip
 Ada **dua** file berawalan `12490` dan keduanya sering tertukar. `docs/PRD.md` (bagian di luar cakupan) menyebut `12490a1c…` sebagai meter roda mekanik. **Menurut data, meter roda mekanik adalah `12490ba7…`**:

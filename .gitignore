@@ -6,7 +6,8 @@ __pycache__/
 .DS_Store
 
 # Dataset publik (unduh ulang, lihat strategi_data.md) & data yang bisa digenerate ulang
-/data/
+/data/*
+!/data/splits/
 pilot/data/
 pipeline/degraded/
 
